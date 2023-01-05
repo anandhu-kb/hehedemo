@@ -1,45 +1,43 @@
 #include <iostream>
 
-class DM;  // Forward declaration of class DM
-
-class DB {
+class Time {
  private:
-  int feet;
-  int inches;
+  int hours;
+  int minutes;
+  int seconds;
  public:
-  DB(int f = 0, int i = 0) {  // Constructor
-    feet = f;
-    inches = i;
+  Time(int h = 0, int m = 0, int s = 0) {  // Constructor to initialize the time object
+    hours = h;
+    minutes = m;
+    seconds = s;
   }
-  friend DM operator+(const DM&, const DB&);  // Declare friend function
-};
-
-class DM {
- private:
-  int meters;
-  int centimeters;
- public:
-  DM(int m = 0, int c = 0) {  // Constructor
-    meters = m;
-    centimeters = c;
+  void read() {  // Function to read the time from the user
+    std::cout << "Enter hours, minutes and seconds: ";
+    std::cin >> hours >> minutes >> seconds;
   }
-  friend DM operator+(const DM&, const DB&);  // Declare friend function
+  void display() {  // Function to display the time
+    std::cout << hours << ":" << minutes << ":" << seconds << std::endl;
+  }
+  Time operator+(const Time& t) {  // Overloaded operator+ to add two Time objects
+    int total_seconds = seconds + t.seconds;
+    int total_minutes = minutes + t.minutes + total_seconds / 60;
+    int final_seconds = total_seconds % 60;
+    int total_hours = hours + t.hours + total_minutes / 60;
+    int final_minutes = total_minutes % 60;
+    return Time(total_hours, final_minutes, final_seconds);
+  }
 };
-
-// Friend function to add two objects of DM and DB
-DM operator+(const DM& dm, const DB& db) {
-  int total_centimeters = dm.centimeters + db.inches * 2.54;  // Convert inches to centimeters
-  int total_meters = dm.meters + db.feet * 0.3048 + total_centimeters / 100;  // Convert feet to meters and add to total meters
-  int final_centimeters = total_centimeters % 100;  // Get the remaining centimeters
-  return DM(total_meters, final_centimeters);  // Return the sum in DM
-}
 
 int main() {
-  DM dm1(1, 50), dm2(0, 75);
-  DB db1(3, 2), db2(1, 6);
-  DM dm3 = dm1 + dm2;  // Add two objects of DM
-  std::cout << "DM: " << dm3.meters << " meters " << dm3.centimeters << " centimeters" << std::endl;
-  DM dm4 = dm1 + db1;  // Add an object of DM and an object of DB
-  std::cout << "DM: " << dm4.meters << " meters " << dm4.centimeters << " centimeters" << std::endl;
+  Time t1, t2;
+  t1.read();  // Read time from the user
+  t2.read();  // Read time from the user
+  Time t3 = t1 + t2;  // Add two Time objects
+  std::cout << "Time 1: ";
+  t1.display();  // Display time 1
+  std::cout << "Time 2: ";
+  t2.display();  // Display time 2
+  std::cout << "Time 3: ";
+  t3.display();  // Display time 3
   return 0;
 }
